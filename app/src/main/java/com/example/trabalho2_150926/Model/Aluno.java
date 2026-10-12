@@ -1,7 +1,6 @@
 package com.example.trabalho2_150926.Model;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
+import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -12,78 +11,37 @@ public class Aluno implements Serializable {
     private String nome;
     private int idade;
     private List<Double> notas;
+
+    @SerializedName(value = "presenca", alternate = {"presencas"})
     private List<Boolean> presencas;
+
+    public Aluno() {
+        this.notas = new ArrayList<>();
+        this.presencas = new ArrayList<>();
+    }
 
     public Aluno(int id, String nome, int idade, List<Double> notas, List<Boolean> presencas) {
         this.id = id;
         this.nome = nome;
         this.idade = idade;
-        this.notas = notas != null ? notas : new ArrayList<>();
-        this.presencas = presencas != null ? presencas : new ArrayList<>();
-    }
-
-    public static Aluno fromJson(JSONObject obj) {
-        try {
-            int id = obj.optInt("id", 0);
-            String nome = obj.optString("nome", "");
-            int idade = obj.optInt("idade", 0);
-
-            List<Double> notas = new ArrayList<>();
-            JSONArray arrNotas = obj.optJSONArray("notas");
-            if (arrNotas != null) {
-                for (int i = 0; i < arrNotas.length(); i++) {
-                    notas.add(arrNotas.getDouble(i));
-                }
-            }
-
-            List<Boolean> presencas = new ArrayList<>();
-            JSONArray arrPresencas = obj.optJSONArray("presenca");
-            if (arrPresencas == null) {
-                arrPresencas = obj.optJSONArray("presencas");
-            }
-            if (arrPresencas != null) {
-                for (int i = 0; i < arrPresencas.length(); i++) {
-                    presencas.add(arrPresencas.getBoolean(i));
-                }
-            }
-            return new Aluno(id, nome, idade, notas, presencas);
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-    public JSONObject toDtoJson() {
-        JSONObject obj = new JSONObject();
-        try {
-            obj.put("nome", this.nome);
-            obj.put("idade", this.idade);
-
-            JSONArray arrNotas = new JSONArray();
-            for (Double n : this.notas) arrNotas.put(n);
-            obj.put("notas", arrNotas);
-
-            JSONArray arrPresencas = new JSONArray();
-            for (Boolean p : this.presencas) arrPresencas.put(p);
-            obj.put("presenca", arrPresencas);
-        } catch (Exception ignored) {
-        }
-        return obj;
+        this.notas = notas != null ? new ArrayList<>(notas) : new ArrayList<>();
+        this.presencas = presencas != null ? new ArrayList<>(presencas) : new ArrayList<>();
     }
 
     public double getMediaNotas() {
-        if (notas.isEmpty()) return 0.0;
+        if (notas == null || notas.isEmpty()) return 0.0;
         double soma = 0;
         for (double n : notas) soma += n;
         return soma / notas.size();
     }
 
     public double getPercentualPresenca() {
-        if (presencas.isEmpty()) return 0.0;
-        int presencasConfirmadas = 0;
-        for (boolean p : presencas) {
-            if (p) presencasConfirmadas++;
+        if (presencas == null || presencas.isEmpty()) return 0.0;
+        int confirmados = 0;
+        for (Boolean p : presencas) {
+            if (Boolean.TRUE.equals(p)) confirmados++;
         }
-        return ((double) presencasConfirmadas / presencas.size()) * 100.0;
+        return ((double) confirmados / presencas.size()) * 100.0;
     }
 
     public boolean isAprovado() {
@@ -92,6 +50,10 @@ public class Aluno implements Serializable {
 
     public int getId() {
         return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getNome() {
@@ -111,7 +73,7 @@ public class Aluno implements Serializable {
     }
 
     public List<Double> getNotas() {
-        return notas;
+        return notas != null ? notas : (notas = new ArrayList<>());
     }
 
     public void setNotas(List<Double> notas) {
@@ -119,7 +81,7 @@ public class Aluno implements Serializable {
     }
 
     public List<Boolean> getPresencas() {
-        return presencas;
+        return presencas != null ? presencas : (presencas = new ArrayList<>());
     }
 
     public void setPresencas(List<Boolean> presencas) {

@@ -1,88 +1,50 @@
 package com.example.trabalho2_150926.View;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.widget.Toast;
-
-import androidx.activity.EdgeToEdge;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+import androidx.appcompat.widget.Toolbar;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.navigation.NavController;
+import androidx.navigation.fragment.NavHostFragment;
+import androidx.navigation.ui.AppBarConfiguration;
+import androidx.navigation.ui.NavigationUI;
 
-import com.example.trabalho2_150926.Model.Aluno;
 import com.example.trabalho2_150926.R;
-import com.example.trabalho2_150926.ViewModel.AlunoViewModel;
+import com.google.android.material.navigation.NavigationView;
 
 public class MainActivity extends AppCompatActivity {
 
-    private AlunoViewModel viewModel;
-    private RecyclerView rvAlunos;
+    private AppBarConfiguration appBarConfiguration;
+    private NavController navController;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
 
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
-        rvAlunos = findViewById(R.id.rvAlunos);
-        rvAlunos.setLayoutManager(new LinearLayoutManager(this));
-        rvAlunos.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
+        DrawerLayout drawerLayout = findViewById(R.id.drawer_layout);
+        NavigationView navView = findViewById(R.id.nav_view);
 
-        findViewById(R.id.btnAbrirEstatisticas).setOnClickListener(v -> {
-            startActivity(new Intent(MainActivity.this, EstatisticasActivity.class));
-        });
+        NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.nav_host_fragment);
+        navController = navHostFragment.getNavController();
 
-        viewModel = new ViewModelProvider(this).get(AlunoViewModel.class);
+        appBarConfiguration = new AppBarConfiguration.Builder(
+                R.id.homepageFragment,
+                R.id.listaAlunosFragment,
+                R.id.estatisticasFragment
+        ).setOpenableLayout(drawerLayout).build();
 
-        viewModel.getListaAlunos().observe(this, lista -> {
-            AlunoAdapter adapter = new AlunoAdapter(lista, new AlunoAdapter.OnAcoesListener() {
-                @Override
-                public void onLongClickDetalhes(Aluno aluno) {
-                    Intent it = new Intent(MainActivity.this, DetalhesAlunoActivity.class);
-                    it.putExtra("ALUNO", aluno);
-                    startActivity(it);
-                }
-
-                @Override
-                public void onEditar(Aluno aluno) {
-                    Intent it = new Intent(MainActivity.this, EditarAlunoActivity.class);
-                    it.putExtra("ID_ALUNO", aluno.getId());
-                    startActivity(it);
-                }
-
-                @Override
-                public void onDeletar(Aluno aluno) {
-                    new AlertDialog.Builder(MainActivity.this)
-                            .setTitle("Confirmar Exclusão")
-                            .setMessage("Deseja remover o estudante " + aluno.getNome() + "?")
-                            .setPositiveButton("Sim, excluir", (dialog, which) -> viewModel.deletarAluno(aluno.getId()))
-                            .setNegativeButton("CANCELAR", null)
-                            .show();
-                }
-            });
-            rvAlunos.setAdapter(adapter);
-        });
-
-        viewModel.getMensagemErro().observe(this, erro -> {
-            if (erro != null) Toast.makeText(this, erro, Toast.LENGTH_SHORT).show();
-        });
+        NavigationUI.setupWithNavController(toolbar, navController, appBarConfiguration);
+        NavigationUI.setupWithNavController(navView, navController);
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        viewModel.carregarAlunos();
+    public boolean onSupportNavigateUp() {
+        return NavigationUI.navigateUp(navController, appBarConfiguration)
+                || super.onSupportNavigateUp();
     }
 }
