@@ -29,6 +29,7 @@ public class EditarAlunoActivity extends AppCompatActivity {
 
         AlunoViewModel vm = new ViewModelProvider(this).get(AlunoViewModel.class);
 
+
         int id = getIntent().getIntExtra("ID_ALUNO", -1);
         if (id != -1) vm.carregarAlunoPorId(id);
 

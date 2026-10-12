@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
@@ -62,7 +63,11 @@ public class EstatisticasActivity extends AppCompatActivity {
             }
 
             tvGeral.setText(String.format("Média Geral: %.2f\nMédia Idade: %.1f anos\nMaior Nota: %s (%.2f)\nMenor Nota: %s (%.2f)",
-                    (somaNotas / lista.size()), ((double) somaIdades / lista.size()), maior.getNome(), maior.getMediaNotas(), menor.getNome(), menor.getMediaNotas()));
+                    (somaNotas / lista.size()),
+                    ((double) somaIdades / lista.size()),
+                    maior.getNome(), maior.getMediaNotas(),
+                    menor.getNome(),
+                    menor.getMediaNotas()));
 
             rvAprovados.setAdapter(new ListaTextoAdapter(aprovados));
             rvReprovados.setAdapter(new ListaTextoAdapter(reprovados));
@@ -75,7 +80,10 @@ public class EstatisticasActivity extends AppCompatActivity {
 
     private static class ListaTextoAdapter extends RecyclerView.Adapter<ListaTextoAdapter.VH> {
         private final List<String> dados;
-        ListaTextoAdapter(List<String> dados) { this.dados = dados; }
+
+        ListaTextoAdapter(List<String> dados) {
+            this.dados = dados;
+        }
 
         @NonNull
         @Override
@@ -90,11 +98,17 @@ public class EstatisticasActivity extends AppCompatActivity {
         }
 
         @Override
-        public int getItemCount() { return dados.size(); }
+        public int getItemCount() {
+            return dados.size();
+        }
 
         static class VH extends RecyclerView.ViewHolder {
             TextView tv;
-            VH(View v) { super(v); tv = v.findViewById(android.R.id.text1); }
+
+            VH(View v) {
+                super(v);
+                tv = v.findViewById(android.R.id.text1);
+            }
         }
     }
 }
