@@ -9,7 +9,7 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 
 public class Conexao {
-    public static final String BASE_URL = "http://10.215.138.7:8080/estudantes/";
+    public static final String BASE_URL = "http://192.168.100.7:8080/estudantes/";
 
     public static String requisitar(String urlEndpoint, String metodo, String corpoJson) throws Exception {
         HttpURLConnection con = null;

@@ -12,9 +12,12 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class AlunoViewModel extends ViewModel {
+
+    private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
     private final MutableLiveData<List<Aluno>> listaAlunosLiveData = new MutableLiveData<>();
     private final MutableLiveData<Aluno> alunoSelecionadoLiveData = new MutableLiveData<>();
@@ -27,14 +30,12 @@ public class AlunoViewModel extends ViewModel {
     public LiveData<String> getMensagemErro() { return mensagemErro; }
 
     public void carregarAlunos() {
-        Executors.newSingleThreadExecutor().execute(() -> {
+        executor.execute(() -> {
             try {
-                // Obtém a lista dos DTOs com IDs
                 String json = Conexao.requisitar(Conexao.BASE_URL, "GET", null);
                 JSONArray array = new JSONArray(json);
                 List<Aluno> lista = new ArrayList<>();
 
-                // Busca cada estudante pelo ID para recuperar as listas de notas e presença
                 for (int i = 0; i < array.length(); i++) {
                     int id = array.getJSONObject(i).getInt("id");
                     String jsonCompleto = Conexao.requisitar(Conexao.BASE_URL + id, "GET", null);
@@ -49,7 +50,7 @@ public class AlunoViewModel extends ViewModel {
     }
 
     public void carregarAlunoPorId(int id) {
-        Executors.newSingleThreadExecutor().execute(() -> {
+        executor.execute(() -> {
             try {
                 String json = Conexao.requisitar(Conexao.BASE_URL + id, "GET", null);
                 JSONObject obj = new JSONObject(json);
@@ -61,7 +62,7 @@ public class AlunoViewModel extends ViewModel {
     }
 
     public void deletarAluno(int id) {
-        Executors.newSingleThreadExecutor().execute(() -> {
+        executor.execute(() -> {
             try {
                 Conexao.requisitar(Conexao.BASE_URL + id, "DELETE", null);
                 carregarAlunos();
@@ -72,7 +73,7 @@ public class AlunoViewModel extends ViewModel {
     }
 
     public void atualizarAluno(Aluno aluno) {
-        Executors.newSingleThreadExecutor().execute(() -> {
+        executor.execute(() -> {
             try {
                 Conexao.requisitar(Conexao.BASE_URL + aluno.getId(), "PUT", aluno.toDtoJson().toString());
                 operacaoSalvarSucesso.postValue(true);
@@ -80,5 +81,12 @@ public class AlunoViewModel extends ViewModel {
                 mensagemErro.postValue("Erro ao salvar estudante: " + e.getMessage());
             }
         });
+    }
+
+    // 2. Libera a thread quando a ViewModel for descartada da memória
+    @Override
+    protected void onCleared() {
+        super.onCleared();
+        executor.shutdown();
     }
 }
