@@ -2,10 +2,10 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/boasVindasFragment">
+    app:startDestination="@id/homepageFragmentm">
 
     <fragment
-        android:id="@+id/boasVindasFragment"
+        android:id="@+id/homepageFragmentm"
         android:name="com.example.trabalho2_150926.View.fragments.HomepageFragment"
         android:label="Boas-Vindas" />
 
