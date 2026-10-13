@@ -23,77 +23,58 @@
             android:inputType="number"
             android:hint="Idade" />
 
-        <!-- Notas -->
+        <!-- Notas existentes -->
         <TextView
-            android:id="@+id/tvNotasAtuais"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:text="Notas: []"
+            android:text="Notas do Aluno:"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/etNota1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Nota 1"
+            android:inputType="numberDecimal"
+            android:visibility="gone" />
+
+        <EditText
+            android:id="@+id/etNota2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Nota 2"
+            android:inputType="numberDecimal"
+            android:visibility="gone" />
+
+        <EditText
+            android:id="@+id/etNota3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Nota 3"
+            android:inputType="numberDecimal"
+            android:visibility="gone" />
+
+        <!-- Presenças -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Presenças (Marque para Presente, Desmarque para Falta):"
             android:textStyle="bold" />
 
         <LinearLayout
+            android:id="@+id/containerPresencas"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <EditText
-                android:id="@+id/etNovaNota"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:hint="Nova nota (0 a 10)"
-                android:inputType="numberDecimal" />
-
-            <Button
-                android:id="@+id/btnAddNota"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Adicionar" />
-        </LinearLayout>
-
-        <!-- Presenças / Frequência -->
-        <TextView
-            android:id="@+id/tvPresencasAtuais"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="Frequência: []"
-            android:textStyle="bold" />
-
-        <RadioGroup
-            android:id="@+id/rgStatusPresenca"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <RadioButton
-                android:id="@+id/rbPresente"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:checked="true"
-                android:text="Presença (C)" />
-
-            <RadioButton
-                android:id="@+id/rbAusente"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:text="Falta (E)" />
-        </RadioGroup>
-
-        <Button
-            android:id="@+id/btnAddPresenca"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Lançar Aula" />
+            android:orientation="vertical" />
 
         <Button
             android:id="@+id/btnSalvarAlteracoes"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:text="Salvar Tudo" />
+            android:layout_marginTop="20dp"
+            android:text="Salvar Alterações" />
 
     </LinearLayout>
 </ScrollView>

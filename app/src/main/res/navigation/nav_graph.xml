@@ -1,38 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/homepageFragmentm">
+    app:startDestination="@id/homepageFragment">
 
+    <!-- 1. Homepage -->
     <fragment
-        android:id="@+id/homepageFragmentm"
+        android:id="@+id/homepageFragment"
         android:name="com.example.trabalho2_150926.View.fragments.HomepageFragment"
-        android:label="Boas-Vindas" />
+        android:label="Homepage"
+        tools:layout="@layout/fragment_homepage" />
 
+    <!-- 2. Estatísticas -->
+    <fragment
+        android:id="@+id/estatisticasFragment"
+        android:name="com.example.trabalho2_150926.View.fragments.EstatisticasFragment"
+        android:label="Estatísticas"
+        tools:layout="@layout/fragment_estatisticas" />
+
+    <!-- 3. Listagem de Alunos -->
     <fragment
         android:id="@+id/listaAlunosFragment"
         android:name="com.example.trabalho2_150926.View.fragments.ListaAlunosFragment"
-        android:label="Listagem de Alunos">
+        android:label="Listagem de Alunos"
+        tools:layout="@layout/fragment_lista_alunos">
+
+        <!-- Ação para abrir tela de edição -->
         <action
             android:id="@+id/action_lista_to_editar"
             app:destination="@id/editarAlunoFragment" />
         <action
-            android:id="@+id/action_lista_to_detalhes"
+            android:id="@+id/action_listaAlunosFragment_to_detalhesAlunoFragment"
             app:destination="@id/detalhesAlunoFragment" />
+
+        <!-- Ação para abrir tela de detalhes -->
     </fragment>
 
-    <fragment
-        android:id="@+id/estatisticasFragment"
-        android:name="com.example.trabalho2_150926.View.fragments.EstatisticasFragment"
-        android:label="Estatísticas da Turma" />
-
+    <!-- 4. Tela de Edição -->
     <fragment
         android:id="@+id/editarAlunoFragment"
         android:name="com.example.trabalho2_150926.View.fragments.EditarAlunoFragment"
-        android:label="Editar Aluno" />
+        android:label="Editar Aluno"
+        tools:layout="@layout/fragment_editar_aluno" />
 
+    <!-- 5. Tela de Detalhes -->
     <fragment
         android:id="@+id/detalhesAlunoFragment"
         android:name="com.example.trabalho2_150926.View.fragments.DetalhesAlunoFragment"
-        android:label="Detalhes do Aluno" />
+        android:label="Detalhes do Aluno"
+        tools:layout="@layout/fragment_detalhes_aluno" />
+
 </navigation>

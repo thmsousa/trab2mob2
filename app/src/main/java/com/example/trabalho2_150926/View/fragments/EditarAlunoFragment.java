@@ -4,17 +4,16 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.RadioGroup;
-import android.widget.TextView;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.Navigation;
+import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.trabalho2_150926.Model.Aluno;
 import com.example.trabalho2_150926.R;
@@ -26,9 +25,8 @@ public class EditarAlunoFragment extends Fragment {
     private EditarAlunoViewModel viewModel;
     private Aluno alunoEmEdicao;
 
-    private EditText etNome, etIdade, etNovaNota;
-    private TextView tvNotas, tvPresencas;
-    private RadioGroup rgStatusPresenca;
+    private EditText etNome, etIdade, etNota1, etNota2, etNota3;
+    private LinearLayout containerPresencas;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -45,10 +43,10 @@ public class EditarAlunoFragment extends Fragment {
 
         etNome = v.findViewById(R.id.etEditNome);
         etIdade = v.findViewById(R.id.etEditIdade);
-        etNovaNota = v.findViewById(R.id.etNovaNota);
-        tvNotas = v.findViewById(R.id.tvNotasAtuais);
-        tvPresencas = v.findViewById(R.id.tvPresencasAtuais);
-        rgStatusPresenca = v.findViewById(R.id.rgStatusPresenca);
+        etNota1 = v.findViewById(R.id.etNota1);
+        etNota2 = v.findViewById(R.id.etNota2);
+        etNota3 = v.findViewById(R.id.etNota3);
+        containerPresencas = v.findViewById(R.id.containerPresencas);
 
         viewModel = new ViewModelProvider(this).get(EditarAlunoViewModel.class);
 
@@ -57,48 +55,60 @@ public class EditarAlunoFragment extends Fragment {
                 alunoEmEdicao = aluno;
                 etNome.setText(aluno.getNome());
                 etIdade.setText(String.valueOf(aluno.getIdade()));
-                atualizarExibicao();
-            }
-        });
 
-        // Adicionar nota
-        v.findViewById(R.id.btnAddNota).setOnClickListener(btn -> {
-            String valor = etNovaNota.getText().toString().trim();
-            if (!valor.isEmpty() && alunoEmEdicao != null) {
-                try {
-                    double n = Double.parseDouble(valor);
-                    if (n >= 0 && n <= 10) {
-                        alunoEmEdicao.getNotas().add(n);
-                        etNovaNota.setText("");
-                        atualizarExibicao();
-                    } else {
-                        Toast.makeText(getContext(), "Nota deve ser entre 0 e 10", Toast.LENGTH_SHORT).show();
+                // Exibe apenas as notas existentes na lista do servidor
+                if (aluno.getNotas() != null) {
+                    if (aluno.getNotas().size() > 0) {
+                        etNota1.setVisibility(View.VISIBLE);
+                        etNota1.setText(String.valueOf(aluno.getNotas().get(0)));
                     }
-                } catch (NumberFormatException e) {
-                    Toast.makeText(getContext(), "Nota inválida", Toast.LENGTH_SHORT).show();
+                    if (aluno.getNotas().size() > 1) {
+                        etNota2.setVisibility(View.VISIBLE);
+                        etNota2.setText(String.valueOf(aluno.getNotas().get(1)));
+                    }
+                    if (aluno.getNotas().size() > 2) {
+                        etNota3.setVisibility(View.VISIBLE);
+                        etNota3.setText(String.valueOf(aluno.getNotas().get(2)));
+                    }
                 }
-            }
-        });
 
-        // Adicionar presença/frequência
-        v.findViewById(R.id.btnAddPresenca).setOnClickListener(btn -> {
-            if (alunoEmEdicao != null) {
-                boolean presente = (rgStatusPresenca.getCheckedRadioButtonId() == R.id.rbPresente);
-                alunoEmEdicao.getPresencas().add(presente);
-                atualizarExibicao();
-                Toast.makeText(getContext(), presente ? "Presença computada!" : "Falta computada!", Toast.LENGTH_SHORT).show();
+                // Cria as checkboxes de presença para cada aula existente
+                containerPresencas.removeAllViews();
+                if (aluno.getPresencas() != null) {
+                    for (int i = 0; i < aluno.getPresencas().size(); i++) {
+                        final int idx = i;
+                        CheckBox cb = new CheckBox(getContext());
+                        cb.setText("Aula " + (i + 1));
+                        cb.setChecked(Boolean.TRUE.equals(aluno.getPresencas().get(i)));
+                        cb.setOnCheckedChangeListener((btn, isChecked) -> {
+                            alunoEmEdicao.getPresencas().set(idx, isChecked);
+                        });
+                        containerPresencas.addView(cb);
+                    }
+                }
             }
         });
 
         // Salvar via PUT
         v.findViewById(R.id.btnSalvarAlteracoes).setOnClickListener(btn -> {
             if (alunoEmEdicao != null) {
-                alunoEmEdicao.setNome(etNome.getText().toString().trim());
                 try {
+                    alunoEmEdicao.setNome(etNome.getText().toString().trim());
                     alunoEmEdicao.setIdade(Integer.parseInt(etIdade.getText().toString().trim()));
+
+                    if (alunoEmEdicao.getNotas().size() > 0 && !etNota1.getText().toString().isEmpty()) {
+                        alunoEmEdicao.getNotas().set(0, Double.parseDouble(etNota1.getText().toString().trim()));
+                    }
+                    if (alunoEmEdicao.getNotas().size() > 1 && !etNota2.getText().toString().isEmpty()) {
+                        alunoEmEdicao.getNotas().set(1, Double.parseDouble(etNota2.getText().toString().trim()));
+                    }
+                    if (alunoEmEdicao.getNotas().size() > 2 && !etNota3.getText().toString().isEmpty()) {
+                        alunoEmEdicao.getNotas().set(2, Double.parseDouble(etNota3.getText().toString().trim()));
+                    }
+
                     viewModel.salvar(alunoEmEdicao);
                 } catch (Exception e) {
-                    Toast.makeText(getContext(), "Idade inválida", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "Verifique os valores inseridos", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -106,17 +116,11 @@ public class EditarAlunoFragment extends Fragment {
         viewModel.getSalvarSucesso().observe(getViewLifecycleOwner(), sucesso -> {
             if (Boolean.TRUE.equals(sucesso)) {
                 Toast.makeText(getContext(), "Alterações salvas!", Toast.LENGTH_SHORT).show();
-                Navigation.findNavController(v).popBackStack();
+                NavHostFragment.findNavController(EditarAlunoFragment.this).popBackStack();
             }
         });
 
         viewModel.carregarAlunoPorId(alunoId);
         return v;
-    }
-
-    private void atualizarExibicao() {
-        tvNotas.setText("Notas: " + alunoEmEdicao.getNotas().toString());
-        tvPresencas.setText(String.format("Frequência: %d registros (%.1f%% de presença)",
-                alunoEmEdicao.getPresencas().size(), alunoEmEdicao.getPercentualPresenca()));
     }
 }

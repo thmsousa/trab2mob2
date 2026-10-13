@@ -58,7 +58,7 @@ public class ListaAlunosFragment extends Fragment {
                 Bundle b = new Bundle();
                 b.putSerializable("ALUNO", aluno);
                 NavHostFragment.findNavController(ListaAlunosFragment.this)
-                        .navigate(R.id.action_lista_to_detalhes, b);
+                        .navigate(R.id.action_listaAlunosFragment_to_detalhesAlunoFragment, b);
             }
         });
 
